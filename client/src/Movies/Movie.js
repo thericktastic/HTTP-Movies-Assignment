@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Route } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 // components
 import MovieCard from "./MovieCard";
@@ -41,6 +41,19 @@ export default class Movie extends React.Component {
     e.preventDefault();
     this.props.history.push(`/movies/${this.state.movie.id}/update-form`);
   };
+
+  handleDelete = e => {
+    e.preventDefault();
+    axios
+      .delete(`http://localhost:5000/api/movies/${this.state.movie.id}`)
+      .then(res => {
+        this.props.history.push(`/`);
+        console.log("This is axios.delete res in UpdateForm: ", res.data);
+      })
+      .catch(err =>
+        console.log("This is axios.delete err in UpdateForm: ", err)
+      );
+  };
   // New code
 
   render() {
@@ -48,21 +61,24 @@ export default class Movie extends React.Component {
       return <div>Loading movie information...</div>;
     }
 
-
     return (
       <div className="save-wrapper">
         <MovieCard movie={this.state.movie} />
         <div className="save-button" onClick={this.saveMovie}>
           Save
         </div>
-        <Route
-          path="/movies/:id/update-form"
-          render={props => {
-            return <UpdateForm {...props} movie={this.state.movie} />;
-          }}
-        />
+        <Route path="/movies/:id/update-form">
+          <UpdateForm
+            history={this.props.history}
+            movie={this.state.movie}
+            updatedMovies={this.props.updatedMovies}
+          />
+        </Route>
         <button className="edit-button" onClick={this.handleUpdate}>
           Update
+        </button>
+        <button className="delete-button" onClick={this.handleDelete}>
+          Delete
         </button>
       </div>
     );

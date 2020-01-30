@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from "react";
-import { Route } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 // components
 import SavedList from "./Movies/SavedList";
@@ -8,9 +8,17 @@ import Movie from "./Movies/Movie";
 
 const App = () => {
   const [savedList, setSavedList] = useState([]);
+  const [movies, setMovies] = useState([]);
 
   const addToSavedList = movie => {
     setSavedList([...savedList, movie]);
+  };
+
+  const updatedMovies = editedMovie => {
+    console.log("This is editedMovie in App.js: ", editedMovie)
+    console.log("This is movies in App.js: ", movies)
+    let filteredMovies = movies.filter(movie => editedMovie.id !== movie.id);
+    return [...movies, setMovies(filteredMovies)];
   };
 
   return (
@@ -20,10 +28,9 @@ const App = () => {
       <Route
         path="/movies/:id"
         render={props => {
-          return <Movie {...props} addToSavedList={addToSavedList} />;
+          return <Movie {...props} addToSavedList={addToSavedList} updatedMovies={updatedMovies} />;
         }}
       />
-      
     </Fragment>
   );
 };
