@@ -1,17 +1,8 @@
-import React, { useState, useParams } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import React, { useState } from "react";
 import axios from "axios";
-
-// const initialMovie = {
-//   title: "",
-//   director: "",
-//   metascore: "",
-//   stars: []
-// };
 
 const UpdateForm = props => {
   const [movie, setMovie] = useState(props.movie);
-  //   const { id } = useParams();
 
   // console.log("This is props in UpdateForm: ", props);
 
@@ -26,12 +17,19 @@ const UpdateForm = props => {
 
   const handleSubmit = e => {
     e.preventDefault();
+
+    // This if statement checks to see if the entry in the 'stars' field is an array, and if that check returns 'false' then movie.stars.split(",") converts it to an array by splitting up the entries separated by a comma
+    if (!Array.isArray(movie.stars)) {
+      movie.stars = movie.stars.split(",");
+    }
+    console.log(`This is movie.stars: `, movie.stars);
+
+    // This axios.put sends the updated movie to the server and then redirects the user to the home page where the user may view the updated list of movies
     axios
       .put(`http://localhost:5000/api/movies/${movie.id}`, movie)
       .then(res => {
         console.log("This is res.data in UpdateForm: ", res.data);
-        props.updatedMovies(movie);
-        props.history.push(`/movies/${movie.id}`);
+        props.history.push(`/`);
       })
       .catch(err => console.log("You failed in UpdateForm, here's why: ", err));
   };
@@ -99,16 +97,3 @@ const UpdateForm = props => {
 };
 
 export default UpdateForm;
-
-// {props.movie.stars.map((star, index) => {
-//     return (
-//       <input
-//         className="update-input"
-//         type="text"
-//         name="stars"
-//         onChange={handleChanges}
-//         placeholder={star}
-//         value={movie.stars}
-//       />
-//     );
-//   })}
